@@ -7,8 +7,8 @@ take one more roll.
 Vanilla HTML/CSS/JS. No build step, no dependencies, no network calls, no image files,
 no audio files. Open `index.html` and play.
 
-> **[▶ Play it](https://YOUR-USERNAME.github.io/one-more-roll/)** — replace
-> `YOUR-USERNAME` once Pages is live (see [Deploying](#deploying)).
+> **[▶ Play it](https://marsfortherich.github.io/one-more-roll/)** — live once Pages
+> finishes its first deploy (see [Deploying](#deploying)).
 
 ```bash
 start index.html                 # or: python tools/serve.py  →  http://localhost:8123
@@ -149,11 +149,10 @@ The repo is a static site with relative paths, so GitHub Pages serves it as-is.
 2. **Settings → Pages → Source: GitHub Actions.**
 3. The included workflow (`.github/workflows/pages.yml`) runs the test suite and a
    balance smoke run, then deploys. **A failing test blocks the deploy.**
-4. Your site lands at `https://<username>.github.io/one-more-roll/`. Update the play
-   link at the top of this file.
+4. Your site lands at <https://marsfortherich.github.io/one-more-roll/>.
 
 ```bash
-git remote add origin git@github.com:<username>/one-more-roll.git
+git remote add origin git@github.com:marsfortherich/one-more-roll.git
 git push -u origin main
 ```
 
