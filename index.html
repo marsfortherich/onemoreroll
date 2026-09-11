@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>One More Roll — a dice roguelite</title>
+
+<!-- Bump every ?v= with `node tools/bump.js <version>`. GitHub Pages caches
+     aggressively, so without this players keep running the old build. -->
+<meta name="app-version" content="1.0.0">
+<meta name="description" content="A push-your-luck dice roguelite. Reforge your dice, stack your charms, and take one more roll.">
+<meta name="theme-color" content="#1c5340">
+<meta name="color-scheme" content="dark">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="One More Roll">
+<meta property="og:description" content="A push-your-luck dice roguelite. Reforge your dice, stack your charms, and take one more roll.">
+<meta name="twitter:card" content="summary">
+
+<link rel="icon" href="favicon.svg?v=1.0.0" type="image/svg+xml">
+<link rel="apple-touch-icon" href="favicon.svg?v=1.0.0">
+<link rel="manifest" href="manifest.webmanifest?v=1.0.0">
+
+<link rel="stylesheet" href="css/style.css?v=1.0.0">
+<link rel="stylesheet" href="css/art.css?v=1.0.0">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside id="sidebar">
+    <div class="blind-plate" id="blindPlate">
+      <div class="blind-name" id="blindName">Small Blind</div>
+      <div class="blind-sub" id="blindSub">Score at least</div>
+      <div class="blind-target" id="blindTarget">300</div>
+      <div class="blind-reward" id="blindReward">Reward: $$$</div>
+    </div>
+
+    <div class="panel score-panel">
+      <div class="label">Round score</div>
+      <div class="round-score" id="roundScore">0</div>
+    </div>
+
+    <div class="panel hand-panel" id="handPanel">
+      <div class="hand-title" id="handTitle">—</div>
+      <div class="hand-lvl" id="handLevel">lvl.1</div>
+      <div class="cm-row">
+        <div class="chips" id="handChips">0</div>
+        <div class="times">×</div>
+        <div class="mult" id="handMult">0</div>
+      </div>
+    </div>
+
+    <div class="panel stats">
+      <div class="stat-row">
+        <div class="stat wide"><span class="k">Turns</span><span class="v turns" id="statTurns">0</span></div>
+        <div class="stat wide"><span class="k">Rerolls</span><span class="v rerolls" id="statRerolls">0</span></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat money-stat"><span class="v money" id="statMoney">$0</span></div>
+        <div class="stat"><span class="k">Ante</span><span class="v" id="statAnte">1/8</span></div>
+        <div class="stat"><span class="k">Round</span><span class="v" id="statRound">1</span></div>
+      </div>
+      <div class="stat-row btns">
+        <button class="mini-btn" id="btnRunInfo">Run Info</button>
+        <button class="mini-btn" id="btnOptions">Options</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main id="main">
+    <div id="topRow">
+      <div class="tray charm-tray">
+        <div class="tray-head"><span id="charmCount">0/5</span></div>
+        <div class="tray-body" id="charmRow"></div>
+      </div>
+      <div class="tray consumable-tray">
+        <div class="tray-head"><span id="consumableCount">0/2</span></div>
+        <div class="tray-body" id="consumableRow"></div>
+      </div>
+    </div>
+
+    <div id="playfield">
+      <div id="scoreFx"></div>
+      <div id="diceRow"></div>
+      <div id="diceHint">Click dice to hold them, then reroll — or pick a category to score.</div>
+      <div id="actionRow">
+        <button class="big-btn roll" id="btnRoll">Roll</button>
+        <button class="big-btn score" id="btnScore" disabled>Score</button>
+        <button class="big-btn sort" id="btnSort">Sort</button>
+      </div>
+    </div>
+
+    <div id="bossBanner" class="hidden"></div>
+  </main>
+
+  <!-- ============ SCORECARD ============ -->
+  <aside id="scorecard">
+    <div class="sc-head">Scorecard</div>
+    <div class="sc-section-label">Upper</div>
+    <div id="scUpper" class="sc-list"></div>
+    <div class="sc-section-label">Lower</div>
+    <div id="scLower" class="sc-list"></div>
+  </aside>
+</div>
+
+<!-- ============ OVERLAYS ============ -->
+<div id="overlay" class="hidden"><div id="overlayInner"></div></div>
+<div id="tooltip" class="hidden"></div>
+<div id="toasts"></div>
+<div id="grainLayer"></div>
+
+<script src="js/util.js?v=1.0.0"></script>
+<script src="js/icons.js?v=1.0.0"></script>
+<script src="js/settings.js?v=1.0.0"></script>
+<script src="js/content.js?v=1.0.0"></script>
+<script src="js/charms.js?v=1.0.0"></script>
+<script src="js/content-extra.js?v=1.0.0"></script>
+<script src="js/decks.js?v=1.0.0"></script>
+<script src="js/meta.js?v=1.0.0"></script>
+<script src="js/audio.js?v=1.0.0"></script>
+<script src="js/fx.js?v=1.0.0"></script>
+<script src="js/engine.js?v=1.0.0"></script>
+<script src="js/game.js?v=1.0.0"></script>
+<script src="js/ui.js?v=1.0.0"></script>
+<script src="js/shop.js?v=1.0.0"></script>
+<script src="js/collection.js?v=1.0.0"></script>
+<script src="js/main.js?v=1.0.0"></script>
+</body>
+</html>

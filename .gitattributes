@@ -1,0 +1,8 @@
+# Normalise to LF in the repository. A CRLF line ending inside a CSS
+# data: URI silently broke every procedural texture once already.
+* text=auto eol=lf
+
+*.svg   text eol=lf
+*.json  text eol=lf
+*.yml   text eol=lf
+*.webmanifest text eol=lf

@@ -1,0 +1,15 @@
+{
+  "name": "One More Roll",
+  "short_name": "One More Roll",
+  "description": "A push-your-luck dice roguelite. Reforge your dice, stack your charms, and take one more roll.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f3626",
+  "theme_color": "#1c5340",
+  "categories": ["games"],
+  "icons": [
+    { "src": "./favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "./favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

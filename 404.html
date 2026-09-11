@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lost your dice — One More Roll</title>
+<style>
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+       background:radial-gradient(ellipse at 50% 20%,#2f8560,#0f3626);
+       color:#f6f2e6;font-family:"Bahnschrift","Franklin Gothic Medium",system-ui,sans-serif;
+       text-align:center;padding:24px}
+  h1{font-size:44px;margin:0 0 6px;letter-spacing:2px;color:#f5b73c}
+  p{color:#a9b6c2;margin:0 0 22px}
+  a{display:inline-block;background:#1b9dff;color:#fff;text-decoration:none;
+    padding:12px 28px;border-radius:9px;box-shadow:0 4px 0 #0a5fae;letter-spacing:1px}
+</style>
+</head>
+<body>
+<div>
+  <h1>404</h1>
+  <p>That roll came up empty.</p>
+  <a id="home" href="./">Back to the table</a>
+</div>
+<script>
+  // project sites live at /<repo>/, user sites at /
+  var seg = location.pathname.split('/').filter(Boolean);
+  document.getElementById('home').href = seg.length > 1 ? '/' + seg[0] + '/' : '/';
+</script>
+</body>
+</html>

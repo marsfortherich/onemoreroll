@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ONE MORE ROLL — icon sheet</title>
+<style>
+  body{background:#16202b;color:#f4f1e8;font-family:"Bahnschrift","Franklin Gothic Medium",system-ui,sans-serif;
+       font-weight:600;margin:0;padding:18px}
+  h1{font-size:18px;letter-spacing:2px;text-transform:uppercase;color:#f0a92c;margin:0 0 14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px}
+  .cell{background:#232c36;border:1px solid #33404e;border-radius:9px;padding:9px 4px;text-align:center}
+  .cell svg{width:34px;height:34px;color:#ffd479}
+  .nm{font-size:8.5px;color:#9aa6b1;margin-top:5px;word-break:break-all;line-height:1.2}
+  .big .cell svg{width:52px;height:52px}
+</style>
+</head>
+<body>
+<h1>Icon sheet</h1>
+<div class="grid" id="grid"></div>
+<script src="../js/icons.js"></script>
+<script>
+  const grid = document.getElementById('grid');
+  Icons.names().sort().forEach(function (n) {
+    const c = document.createElement('div');
+    c.className = 'cell';
+    c.innerHTML = Icons.markup(n) + '<div class="nm">' + n + '</div>';
+    grid.appendChild(c);
+  });
+</script>
+</body>
+</html>
