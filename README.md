@@ -146,7 +146,10 @@ than bricking the title screen. Runs are seeded — same seed, same run.
 The repo is a static site with relative paths, so GitHub Pages serves it as-is.
 
 1. Create a repo named **`one-more-roll`** and push this folder to `main`.
-2. **Settings → Pages → Source: GitHub Actions.**
+2. **Settings → Pages → Source: GitHub Actions.** This step is manual and unavoidable:
+   the workflow's default `GITHUB_TOKEN` cannot switch Pages on for a repo (that needs
+   admin scope), so the first deploy fails with *"Resource not accessible by
+   integration"* until the toggle is flipped by hand. Re-run the workflow afterwards.
 3. The included workflow (`.github/workflows/pages.yml`) runs the test suite and a
    balance smoke run, then deploys. **A failing test blocks the deploy.**
 4. Your site lands at <https://marsfortherich.github.io/one-more-roll/>.

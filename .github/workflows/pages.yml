@@ -39,11 +39,12 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      # NOTE: Pages must already be switched on for this repo, under
+      # Settings -> Pages -> Source: GitHub Actions. `enablement: true`
+      # does not work here: creating a Pages site needs repo-admin scope,
+      # which the default GITHUB_TOKEN does not have, and it fails with
+      # "Resource not accessible by integration".
       - uses: actions/configure-pages@v5
-        # turns Pages on for the repo on the first run, so no settings
-        # click is needed before the first deploy
-        with:
-          enablement: true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
