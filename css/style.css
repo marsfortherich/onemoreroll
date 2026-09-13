@@ -593,3 +593,46 @@ html.high-contrast .pip{background:#000}
   .coll-grid .card{height:92px}
   .deck-grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}
 }
+
+/* ==========================================================================
+   Arcade alignment
+   --------------------------------------------------------------------------
+   One More Roll keeps its felt, its chips and its dice; these rules pull its
+   shape and press-feel onto the shared scale in shared/css/arcade.css so the
+   corners, panel lift and button response match the rest of the arcade.
+   Appended rather than woven in, so the design-system layer stays legible.
+   ========================================================================== */
+
+.panel,
+.tray,
+.blind-plate { border-radius: var(--ac-r-md); }
+
+.stat,
+.mini-btn,
+.cash-line,
+.shop-item .price { border-radius: var(--ac-r-sm); }
+
+#overlayInner { border-radius: var(--ac-r-lg); box-shadow: var(--ac-lift-3); }
+#tooltip { border-radius: var(--ac-r-md); }
+.toast { border-radius: var(--ac-r-sm); }
+
+.ov-btn {
+  border-radius: var(--ac-r-md);
+  letter-spacing: .08em;
+}
+.ov-btn:hover:not(:disabled) { filter: brightness(1.18); }
+.ov-btn:active:not(:disabled) { transform: translateY(2px); box-shadow: none; }
+.ov-btn:focus-visible { outline: 2px solid var(--ac-gold); outline-offset: 2px; }
+
+/* Shared caps treatment: one tracking value for every small uppercase label. */
+.label,
+.blind-sub,
+.stat .k,
+.mini-btn,
+.shelf-label,
+.title-tag,
+.info-box h3 { letter-spacing: var(--ac-track-caps); }
+
+/* Keep the fixed arcade bar clear of the scorecard's heading. The clearance
+   is measured from the bar itself, so a long player name cannot grow into it. */
+#scorecard { padding-top: calc(var(--ac-bar-h) + var(--ac-s3)); }

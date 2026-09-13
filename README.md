@@ -7,7 +7,7 @@ take one more roll.
 Vanilla HTML/CSS/JS. No build step, no dependencies, no network calls, no image files,
 no audio files. Open `index.html` and play.
 
-> **[▶ Play it](https://marsfortherich.github.io/one-more-roll/)** — live once Pages
+> **[▶ Play it](https://onemoreroll.marsindustries.dev/)** — live once Pages
 > finishes its first deploy (see [Deploying](#deploying)).
 
 ```bash
@@ -145,17 +145,18 @@ than bricking the title screen. Runs are seeded — same seed, same run.
 
 The repo is a static site with relative paths, so GitHub Pages serves it as-is.
 
-1. Create a repo named **`one-more-roll`** and push this folder to `main`.
+1. Create a repo named **`onemoreroll`** and push this folder to `main`.
 2. **Settings → Pages → Source: GitHub Actions.** This step is manual and unavoidable:
    the workflow's default `GITHUB_TOKEN` cannot switch Pages on for a repo (that needs
    admin scope), so the first deploy fails with *"Resource not accessible by
    integration"* until the toggle is flipped by hand. Re-run the workflow afterwards.
 3. The included workflow (`.github/workflows/pages.yml`) runs the test suite and a
    balance smoke run, then deploys. **A failing test blocks the deploy.**
-4. Your site lands at <https://marsfortherich.github.io/one-more-roll/>.
+4. The `CNAME` file binds the site to <https://onemoreroll.marsindustries.dev/>;
+   without it Pages would serve at `marsfortherich.github.io/onemoreroll/` instead.
 
 ```bash
-git remote add origin git@github.com:marsfortherich/one-more-roll.git
+git remote add origin https://github.com/marsfortherich/onemoreroll.git
 git push -u origin main
 ```
 
@@ -286,3 +287,13 @@ A browser roguelite experiment. The run structure — escalating blinds, a shop 
 them, and a build assembled from stacking modifiers — owes an obvious debt to
 **Balatro**. The dice, the scorecard-as-a-resource, and the editable die faces are this
 game's own.
+
+## Part of the Roguelike Arcade
+
+One More Roll shares a design system, a sign-in and a leaderboard with the other games
+in the arcade. That layer lives in `shared/` and is a synced copy — edit the
+canonical one at the arcade root and run `python tools/sync-shared.py`. See
+`ARCADE.md` at the arcade root for the full picture, including Firebase setup.
+
+Without a Firebase config the arcade reports "Offline" and the game plays exactly
+as it always has, entirely from `localStorage`.

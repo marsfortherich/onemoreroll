@@ -44,6 +44,14 @@ jobs:
       # does not work here: creating a Pages site needs repo-admin scope,
       # which the default GITHUB_TOKEN does not have, and it fails with
       # "Resource not accessible by integration".
+
+      - name: Check the published root is intact
+        run: |
+          test -f index.html || { echo "::error::index.html is missing"; exit 1; }
+          test -f CNAME || { echo "::error::CNAME is missing — the custom domain would be dropped"; exit 1; }
+          test -f shared/js/arcade.js || {
+            echo "::error::shared/ is missing — run tools/sync-shared.py in the arcade and commit"; exit 1; }
+
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

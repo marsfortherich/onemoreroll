@@ -653,6 +653,13 @@
     return b;
   }
 
+  /** Drop the shared arcade buttons into one of this game's own overlays. */
+  function arcadeRow(root) {
+    if (root && global.Arcade && global.Arcade.ui) {
+      root.appendChild(global.Arcade.ui.inlineActions({ gameId: 'onemoreroll' }));
+    }
+  }
+
   /* ================= blind select ================= */
   function showBlindSelect() {
     const run = Game.run;
@@ -742,6 +749,7 @@
       });
       root.appendChild(box);
       appendUnlocks(root, run.unlocks);
+      arcadeRow(root);
       const acts = el('div', 'ov-actions');
       acts.appendChild(btn('Same Deck', 'gold', function () { Main.retry(); }));
       acts.appendChild(btn('Same Seed', 'alt', function () { Main.retry(run.seed); }));
@@ -772,6 +780,7 @@
       });
       root.appendChild(box);
       appendUnlocks(root, run.unlocks);
+      arcadeRow(root);
       const acts = el('div', 'ov-actions');
       acts.appendChild(btn('Keep Going (Endless)', 'gold', function () { Game.goEndless(); }));
       acts.appendChild(btn('New Run', 'alt', function () { Main.chooseStart(); }));
@@ -1100,7 +1109,7 @@
     genericCard: genericCard, charmCard: charmCard, consumableCard: consumableCard,
     buildDie: buildDie, attachTip: attachTip, iconNode: iconNode, iconArt: iconArt,
     showBlindSelect: showBlindSelect, showCashout: showCashout,
-    showGameOver: showGameOver, showVictory: showVictory,
+    showGameOver: showGameOver, showVictory: showVictory, arcadeRow: arcadeRow,
     showRunInfo: showRunInfo, showOptions: showOptions, showHelp: showHelp,
     showSettings: showSettings,
     openDicePicker: openDicePicker,

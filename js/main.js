@@ -79,6 +79,8 @@
       const ver = el('div', 'ov-sub version-stamp');
       ver.textContent = 'v' + appVersion();
       root.appendChild(ver);
+
+      UI.arcadeRow(root);
     });
   }
 
@@ -206,6 +208,9 @@
   }
 
   function boot() {
+    // Shared account + leaderboard layer. Resolves the signed-in player before
+    // the title screen draws, so the arcade bar is never wrong on first paint.
+    if (global.Arcade) global.Arcade.init({ gameId: 'onemoreroll' });
     UI.init();
     title();
   }

@@ -1033,6 +1033,20 @@
   function saveMetaOnEnd(won) {
     if (!run || run.metaSaved) return null;
     run.metaSaved = true;
+
+    // The arcade ranks One More Roll by best single turn — the number this
+    // game already treats as its headline score. Fire-and-forget.
+    if (global.Arcade) {
+      global.Arcade.submitScore('onemoreroll', (run.stats && run.stats.best) || 0, {
+        ante: run.ante,
+        round: run.roundNum,
+        won: !!won,
+        deck: run.deckId,
+        stake: run.stake,
+        seed: run.seed
+      });
+    }
+
     return Profile.endRun(run, won);
   }
 
