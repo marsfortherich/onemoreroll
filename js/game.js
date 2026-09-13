@@ -84,12 +84,21 @@
     const dm = deck.mods || {};
     const sm = DK.stakeMods(stake);
 
-    const dieCount = Math.max(1, BASE_DICE + (dm.dice || 0));
+    const meta = (global.Arcade && global.Arcade.progress)
+      ? {
+          money: global.Arcade.progress.bonus('onemoreroll', 'money'),
+          dice: global.Arcade.progress.bonus('onemoreroll', 'dice'),
+          consumable: global.Arcade.progress.bonus('onemoreroll', 'consumable')
+        }
+      : { money: 0, dice: 0, consumable: 0 };
+
+    run.money += meta.money;
+    const dieCount = Math.max(1, BASE_DICE + (dm.dice || 0) + meta.dice);
     for (let i = 0; i < dieCount; i++) run.dice.push(makeDie());
     C.CATEGORIES.forEach(function (c) { run.levels[c.id] = 1; });
 
     run.charmSlots = Math.max(1, 5 + (dm.charmSlots || 0));
-    run.consumableSlots = Math.max(0, 2 + (dm.consumableSlots || 0));
+    run.consumableSlots = Math.max(0, 2 + (dm.consumableSlots || 0) + meta.consumable);
 
     // the deck reshapes the opening position...
     if (deck.setup) {
@@ -392,6 +401,7 @@
       // Encore: this category stays open, so it can be played again.
       b.encoresLeft--;
       UI.toast('Encore: ' + C.CAT_BY_ID[catId].name + ' stays open', 'good');
+      if (global.Arcade && global.Arcade.progress) global.Arcade.progress.award('omr_encore');
     } else {
       b.used[catId] = true;
     }
@@ -1047,6 +1057,13 @@
     // The arcade ranks One More Roll by best single turn — the number this
     // game already treats as its headline score. Fire-and-forget.
     if (global.Arcade) {
+      global.Arcade.progress.recordRun('onemoreroll', {
+        score: (run.stats && run.stats.best) || 0,
+        ante: run.ante,
+        won: !!won,
+        // The peril level is this game's difficulty ladder.
+        difficulty: String(run.stake || 1)
+      });
       global.Arcade.submitScore('onemoreroll', {
         score: (run.stats && run.stats.best) || 0,
         metrics: {
