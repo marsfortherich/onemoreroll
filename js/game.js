@@ -252,6 +252,9 @@
       score: 0,
       mods: mods,
       used: {},
+      // Replays granted by Encore-style charms, spent as categories are scored.
+      // Set below, once the blind's charms have been applied.
+      encoresLeft: 0,
       locked: [],
       benched: [],
       borrowed: [],
@@ -293,6 +296,9 @@
       run.borrowDice = 0;
     }
     run.blind.turnsLeft = turnsForBlind();
+    // Replays refresh each blind, so Encore is a per-blind decision rather
+    // than a one-off for the whole run.
+    run.blind.encoresLeft = CH.sumPassive(run, 'encore', 'encores');
     run.charms.forEach(function (inst) {
       const def = CH.CHARM_BY_ID[inst.id];
       if (def && def.onBlindStart) def.onBlindStart(run, inst);
@@ -382,6 +388,10 @@
     if ((!res.valid || res.dead) && CH.hasPassive(run, 'scratchproof')) {
       earn(6, 'Scratchproof');
       UI.toast('Scratchproof: category kept', 'good');
+    } else if (res.valid && !res.dead && (b.encoresLeft || 0) > 0) {
+      // Encore: this category stays open, so it can be played again.
+      b.encoresLeft--;
+      UI.toast('Encore: ' + C.CAT_BY_ID[catId].name + ' stays open', 'good');
     } else {
       b.used[catId] = true;
     }
@@ -1037,13 +1047,20 @@
     // The arcade ranks One More Roll by best single turn — the number this
     // game already treats as its headline score. Fire-and-forget.
     if (global.Arcade) {
-      global.Arcade.submitScore('onemoreroll', (run.stats && run.stats.best) || 0, {
-        ante: run.ante,
-        round: run.roundNum,
-        won: !!won,
-        deck: run.deckId,
-        stake: run.stake,
-        seed: run.seed
+      global.Arcade.submitScore('onemoreroll', {
+        score: (run.stats && run.stats.best) || 0,
+        metrics: {
+          ante: run.ante,
+          money: (run.stats && run.stats.moneyEarned) || 0
+        },
+        meta: {
+          ante: run.ante,
+          round: run.roundNum,
+          won: !!won,
+          deck: run.deckId,
+          stake: run.stake,
+          seed: run.seed
+        }
       });
     }
 

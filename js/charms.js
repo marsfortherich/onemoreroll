@@ -386,6 +386,18 @@
       passive: 'noLow'
     },
     {
+      /* Replaying a category is the one thing the base game never lets you do,
+         so it is deliberately rationed: unlimited replays would just mean
+         scoring your best category every turn, and the scorecard would stop
+         being a constraint at all. `encores` is a count so a future charm can
+         grant more without touching game.js. */
+      id: 'encore', name: 'Encore', icon: '\u{1F3AD}', rarity: RAR.RARE,
+      desc: function () {
+        return 'The <b>first</b> category you score each blind is <b>not used up</b>';
+      },
+      passive: 'encore', encores: 1
+    },
+    {
       id: 'the_archivist', name: 'The Archivist', icon: '\u{1F4DA}', rarity: RAR.RARE,
       desc: function () { return 'Every category starts each blind <b>1 level higher</b>'; },
       passive: 'levelBoost'
@@ -436,6 +448,15 @@
     }
     return false;
   }
+  /** Total of a numeric field across every charm carrying `flag`. */
+  function sumPassive(run, flag, field) {
+    let n = 0;
+    for (let i = 0; i < run.charms.length; i++) {
+      const def = CHARM_BY_ID[run.charms[i].id];
+      if (def && def.passive === flag) n += (def[field] || 0);
+    }
+    return n;
+  }
   function countPassive(run, flag) {
     let n = 0;
     for (let i = 0; i < run.charms.length; i++) {
@@ -447,6 +468,6 @@
 
   global.CH = {
     CHARMS: CHARMS, CHARM_BY_ID: CHARM_BY_ID, RARITY_COST: RARITY_COST,
-    hasPassive: hasPassive, countPassive: countPassive, grow: grow, st: st
+    hasPassive: hasPassive, countPassive: countPassive, sumPassive: sumPassive, grow: grow, st: st
   };
 })(window);

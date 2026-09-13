@@ -749,6 +749,48 @@ describe('stakes', function () {
 /* ============================================================
    Profile
    ============================================================ */
+describe('encore', function () {
+  function playing(g, seed) {
+    g.Game.newRun(seed || 'ENCORE');
+    g.Game.startBlind();
+    return g.Game.run;
+  }
+
+  it('without the charm a category is used up once scored', function () {
+    const g = createGame({ quiet: true });
+    const run = playing(g);
+    const cat = g.C.CATEGORIES[0].id;          // Aces: always a valid score
+    eq(g.E.catStatus(run, cat), 'open');
+    g.Game.scoreCategory(cat);
+    eq(g.E.catStatus(run, cat), 'used', 'category consumed');
+  });
+
+  it('Encore keeps the first scored category open, then stops', function () {
+    const g = createGame({ quiet: true });
+    const run = playing(g, 'ENCORE2');
+    g.Game.addCharm('encore', true);
+    run.blind.encoresLeft = g.CH.sumPassive(run, 'encore', 'encores');
+    eq(run.blind.encoresLeft, 1, 'one replay granted');
+
+    const cat = g.C.CATEGORIES[0].id;
+    g.Game.scoreCategory(cat);
+    eq(g.E.catStatus(run, cat), 'open', 'first score does not consume it');
+    eq(run.blind.encoresLeft, 0, 'the replay is spent');
+
+    g.Game.scoreCategory(cat);
+    eq(g.E.catStatus(run, cat), 'used', 'second score consumes it');
+  });
+
+  it('replays refresh each blind', function () {
+    const g = createGame({ quiet: true });
+    const run = playing(g, 'ENCORE3');
+    g.Game.addCharm('encore', true);
+    run.blind.encoresLeft = 0;
+    g.Game.startBlind();
+    eq(g.Game.run.blind.encoresLeft, 1, 'a new blind restores the replay');
+  });
+});
+
 describe('profile', function () {
   it('records a finished run and unlocks decks', function () {
     const g = createGame({ quiet: true });
