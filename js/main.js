@@ -210,7 +210,15 @@
   function boot() {
     // Shared account + leaderboard layer. Resolves the signed-in player before
     // the title screen draws, so the arcade bar is never wrong on first paint.
-    if (global.Arcade) global.Arcade.init({ gameId: 'onemoreroll' });
+    if (global.Arcade) {
+      global.Arcade.init({ gameId: 'onemoreroll' });
+      global.Arcade.ui.setSound({
+        ui: function () { Sfx.play('click'); },
+        success: function () { Sfx.play('coin'); },
+        deny: function () { Sfx.play('denied'); },
+        achievement: function () { Sfx.play('unlock'); }
+      });
+    }
     UI.init();
     title();
   }
