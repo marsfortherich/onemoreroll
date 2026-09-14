@@ -167,8 +167,8 @@ running the old build indefinitely. Every asset URL in `index.html` carries a `?
 token — bump it before you push:
 
 ```bash
-node tools/bump.js          # 1.0.0 -> 1.0.1
-node tools/bump.js 1.1.0    # or set it explicitly
+python ../tools/bump.py onemoreroll          # 1.0.0 -> 1.0.1
+python ../tools/bump.py onemoreroll 1.1.0    # or set it explicitly
 ```
 
 The version is shown on the title screen, which makes bug reports much easier to place.

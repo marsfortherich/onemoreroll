@@ -33,7 +33,7 @@
     return wrap;
   }
 
-  /** Version string, read from the meta tag `tools/bump.js` maintains. */
+  /** Version string, read from the meta tag `tools/bump.py` maintains. */
   function appVersion() {
     const m = document.querySelector('meta[name="app-version"]');
     return m ? m.getAttribute('content') : '';
