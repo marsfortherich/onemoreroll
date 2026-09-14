@@ -81,6 +81,7 @@
       root.appendChild(ver);
 
       UI.arcadeRow(root);
+      if (global.Arcade && global.Arcade.dealer) global.Arcade.dealer.greet('onemoreroll');
     });
   }
 

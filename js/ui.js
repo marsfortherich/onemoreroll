@@ -756,6 +756,9 @@
       acts.appendChild(btn('Change Deck', 'alt', function () { Main.chooseStart(); }));
       acts.appendChild(btn('Main Menu', 'alt', function () { Main.title(); }));
       root.appendChild(acts);
+      if (global.Arcade && global.Arcade.dealer) {
+        global.Arcade.dealer.reactToRun({ ante: run.ante, score: run.stats.best, won: false });
+      }
     });
   }
 
@@ -782,6 +785,9 @@
       appendUnlocks(root, run.unlocks);
       arcadeRow(root);
       const acts = el('div', 'ov-actions');
+      if (global.Arcade && global.Arcade.dealer) {
+        global.Arcade.dealer.reactToRun({ ante: run.ante, score: run.stats.best, won: true });
+      }
       acts.appendChild(btn('Keep Going (Endless)', 'gold', function () { Game.goEndless(); }));
       acts.appendChild(btn('New Run', 'alt', function () { Main.chooseStart(); }));
       root.appendChild(acts);
