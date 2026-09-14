@@ -69,8 +69,12 @@
 
   /* ---------- number formatting ---------- */
   function fmt(n) {
+    if (n !== n) return '0';
     if (!isFinite(n)) return 'inf';
     const a = Math.abs(n);
+    /* The suffixes below keep big numbers short and readable, but they run out
+       at T: without this, a deep endless run prints "128000.00T". */
+    if (a >= 1e15) return n.toExponential(2).replace('e+', 'e');
     if (a >= 1e12) return (n / 1e12).toFixed(2) + 'T';
     if (a >= 1e9) return (n / 1e9).toFixed(2) + 'B';
     if (a >= 1e6) return (n / 1e6).toFixed(2) + 'M';

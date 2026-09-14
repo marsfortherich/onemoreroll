@@ -814,6 +814,7 @@
   /* ================= run info ================= */
   function showRunInfo() {
     const run = Game.run;
+    if (!run) return;          // reachable by keyboard from behind the title overlay
     openOverlay(function (root) {
       root.appendChild(el('div', 'ov-title', 'Run Info'));
       root.appendChild(el('div', 'ov-sub',

@@ -359,6 +359,7 @@
   }
 
   function reroll() {
+    if (!run) return false;
     const b = run.blind;
     if (b.rerollsLeft <= 0) return false;
     const idx = [];
