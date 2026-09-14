@@ -1,19 +1,22 @@
 /* ============ ONE MORE ROLL ============ */
 :root{
-  --felt:#1f5c46;
-  --felt-dark:#16452f;
-  --ink:#1a2129;
-  --ink-2:#232c36;
-  --ink-3:#2e3945;
-  --edge:#0d1116;
-  --chip:#0090ff;
-  --chip-dark:#0060b8;
-  --mult:#fe5f55;
-  --mult-dark:#c03a30;
-  --gold:#f0a92c;
-  --gold-dark:#b57715;
-  --text:#f4f1e8;
-  --dim:#9aa6b1;
+  /* Kept in step with the palette in art.css, which refines these. If that
+     file is ever dropped the game still reads as itself rather than snapping
+     back to a green table. */
+  --felt:#2b2018;
+  --felt-dark:#140e09;
+  --ink:#241a13;
+  --ink-2:#30231a;
+  --ink-3:#453324;
+  --edge:#0b0704;
+  --chip:#2f9e8f;
+  --chip-dark:#175d54;
+  --mult:#e2743a;
+  --mult-dark:#a5451c;
+  --gold:#d9a63c;
+  --gold-dark:#8f6216;
+  --text:#f6efe3;
+  --dim:#a89680;
   --good:#57d17a;
   --bad:#e35d5d;
   --r:10px;

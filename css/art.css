@@ -50,25 +50,35 @@ body{
 }
 
 /* ============================================================
-   2. Palette — deeper, warmer, less "default bootstrap game"
+   2. Palette — a dice table, not a card table
+
+   Green felt with blue chips and a red multiplier is borrowed clothing: it is
+   the livery of the game this one takes its shape from, and inside this arcade
+   it also collided with No Limit, which is an actual roulette table and has
+   the better claim to felt.
+
+   Walnut, brass and bone say dice instead. The two halves of the score formula
+   move to verdigris and ember — as legible against each other as blue against
+   red, without being anybody's signature. Everything in this file and in
+   style.css reads from here, so the identity lives in one place.
    ============================================================ */
 :root{
-  --felt:#1c5340;
-  --felt-dark:#0f3626;
-  --felt-lit:#2f8560;
-  --ink:#151c24;
-  --ink-2:#1e2731;
-  --ink-3:#2b3742;
-  --edge:#080b0f;
-  --chip:#1b9dff;
-  --chip-dark:#0a5fae;
-  --mult:#ff5a4d;
-  --mult-dark:#b8332a;
-  --gold:#f5b73c;
-  --gold-dark:#a56b12;
-  --text:#f6f2e6;
-  --dim:#8f9daa;
-  --paper:#efe7d2;
+  --felt:#2b2018;          /* lamp-lit leather */
+  --felt-dark:#140e09;
+  --felt-lit:#6b4a30;      /* where the lamp actually falls */
+  --ink:#241a13;           /* panels: dark, grained */
+  --ink-2:#30231a;
+  --ink-3:#453324;
+  --edge:#0b0704;          /* the hard bottom edge every panel sits on */
+  --chip:#2f9e8f;          /* verdigris — the chips half of the formula */
+  --chip-dark:#175d54;
+  --mult:#e2743a;          /* ember — the fortune half */
+  --mult-dark:#a5451c;
+  --gold:#d9a63c;          /* brass */
+  --gold-dark:#8f6216;
+  --text:#f6efe3;          /* bone */
+  --dim:#a89680;
+  --paper:#efe7d2;         /* the scorecard is still a printed sheet */
   --paper-2:#cfc3a4;
   --paper-edge:#8d8065;
 }
@@ -89,7 +99,7 @@ body{
   background:
     radial-gradient(ellipse 120% 90% at 50% -10%, var(--felt-lit) 0%, transparent 62%),
     radial-gradient(ellipse 100% 100% at 50% 45%, var(--felt) 0%, var(--felt-dark) 100%),
-    #0c2c1f;
+    #0d0803;
 }
 body::before{
   content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
@@ -136,7 +146,7 @@ body::after{
   background-image:
     linear-gradient(180deg,rgba(255,255,255,.06),transparent 40%),
     var(--grain),
-    linear-gradient(180deg,#27323e,#161e26);
+    linear-gradient(180deg,#3a2a1e,#1b120b);
   background-blend-mode:normal,overlay,normal;
   border:2px solid var(--gold-dark);
   box-shadow:0 4px 0 var(--edge),0 10px 22px rgba(0,0,0,.42),
@@ -146,10 +156,10 @@ body::after{
   background-image:
     linear-gradient(180deg,rgba(255,140,140,.09),transparent 42%),
     var(--grain),
-    linear-gradient(180deg,#44242e,#21131a);
-  border-color:#9b3444;
+    linear-gradient(180deg,#4a2420,#241010);
+  border-color:#a6412e;
   box-shadow:0 4px 0 var(--edge),0 10px 26px rgba(0,0,0,.5),
-             inset 0 1px 0 rgba(255,255,255,.08),0 0 22px rgba(155,52,68,.25);
+             inset 0 1px 0 rgba(255,255,255,.08),0 0 22px rgba(166,65,46,.28);
 }
 
 #playfield{
@@ -433,17 +443,22 @@ body::after{
    8. Pips / Fortune readouts — lit plates, not flat swatches
    ============================================================ */
 .chips{
-  background:linear-gradient(180deg,#3fb2ff,#0a6fc4);
+  background:linear-gradient(180deg,#48c3b1,#166055);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -3px 0 rgba(0,0,0,.32),0 2px 6px rgba(0,0,0,.3);
   text-shadow:0 1px 2px rgba(0,0,0,.45);
 }
 .mult{
-  background:linear-gradient(180deg,#ff7a6d,#c9372c);
+  background:linear-gradient(180deg,#f08b4d,#9c3d16);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 -3px 0 rgba(0,0,0,.32),0 2px 6px rgba(0,0,0,.3);
   text-shadow:0 1px 2px rgba(0,0,0,.45);
 }
-.blind-target,.round-score{text-shadow:0 2px 0 rgba(0,0,0,.55),0 0 18px rgba(255,90,77,.25)}
-.round-score{color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.55),0 0 20px rgba(245,183,60,.3)}
+.blind-target,.round-score{text-shadow:0 2px 0 rgba(0,0,0,.55),0 0 18px rgba(226,116,58,.28)}
+.round-score{color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.55),0 0 22px rgba(217,166,60,.34)}
+
+/* The round score and the target it chases were the same size, which left the
+   eye nowhere to land. One hero number, everything else beneath it. */
+.round-score{font-size:46px;line-height:1;letter-spacing:-.02em}
+.blind-target{font-size:27px}
 
 /* ============================================================
    9. Buttons — pressed metal, not flat rectangles
@@ -577,3 +592,36 @@ html.high-contrast body::before,html.high-contrast body::after,
 html.high-contrast #grainLayer{display:none}
 html.high-contrast .card{background:#faf7f0;color:#000}
 html.high-contrast .die{background:#fff}
+
+/* ============================================================
+   12. Warming the leftovers
+
+   style.css predates the palette above and names a handful of cool
+   blue-greys as literals — the tooltip, the overlay shell, the toast.
+   On green felt they read as neutral; on walnut they read as blue.
+   Restated here rather than hunted down in place, so the art direction
+   stays in one file.
+   ============================================================ */
+#overlayInner{
+  background:linear-gradient(180deg,var(--ink-2),var(--ink));
+  border-color:#4a3527;
+}
+#tooltip{background:#1d1510;border-color:#4a3527}
+#tooltip .tt-desc{color:#e7dbcb}
+#tooltip .tt-desc .c{color:var(--chip)}
+#tooltip .tt-desc .m{color:var(--mult)}
+#tooltip .tt-foot{border-top-color:#382719}
+.toast{background:#1d1510;border-color:#4a3527}
+.toast.good{border-color:#3f6b42}
+.toast.bad{border-color:#8a4a3f}
+.cash-line{background:var(--ink-2)}
+.cash-total{border-top-color:var(--ink-3)}
+.mini-btn:hover{background:var(--ink-3)}
+.info-box h3{color:var(--gold)}
+
+/* Keyboard focus was invisible on every control. */
+.big-btn:focus-visible,.ov-btn:focus-visible,
+.mini-btn:focus-visible,.bc-btn:focus-visible,.sc-row:focus-visible{
+  outline:2px solid var(--gold);
+  outline-offset:2px;
+}
