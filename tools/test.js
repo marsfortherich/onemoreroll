@@ -828,6 +828,79 @@ describe('profile', function () {
     eq(g.Profile.get().runs, 1, 'exactly one run recorded');
   });
 
+  /* Endless mode used to lose every turn played after the win: the win
+     posted the score once, and the once-only guard then turned away the end
+     of the endless run. These pin the fix down with a recording Arcade. */
+  function recordingArcade(g) {
+    const calls = { submits: [], runs: [], bests: [] };
+    g.Arcade = {
+      submitScore: function (id, p) { calls.submits.push(p); },
+      progress: {
+        recordRun: function (id, s) { calls.runs.push(s); },
+        recordBest: function (id, s) { calls.bests.push(s); },
+        // the rest of what the game asks the arcade, answered neutrally
+        bonus: function () { return 0; },
+        award: function () { return false; }
+      }
+    };
+    return calls;
+  }
+
+  it('an endless run posts the turns it scored after the win', function () {
+    const g = createGame({ quiet: true });
+    g.Profile.reset();
+    const calls = recordingArcade(g);
+    g.Game.newRun('ENDLESS1', { deckId: 'standard', stake: 1 });
+    g.Game.run.ante = 8;
+    g.Game.run.stats.best = 50000;
+    g.Game.saveMetaOnEnd(true);                       // ante 8 falls
+    eq(calls.submits.length, 1, 'the win posts');
+    g.Game.goEndless();
+    g.Game.run.ante = 12;
+    g.Game.run.stats.best = 3200000;                  // the big turn, in endless
+    g.Game.saveMetaOnEnd(false);                      // the endless run ends
+    eq(calls.submits.length, 2, 'the end of endless posts again');
+    eq(calls.submits[1].score, 3200000, 'with the endless best turn');
+    eq(calls.submits[1].metrics.ante, 12, 'and the ante it reached');
+    eq(calls.submits[1].meta.won, true, 'an endless run has won');
+    eq(calls.bests[0].score, 3200000, 'the arcade best rises');
+    eq(calls.runs.length, 1, 'the arcade counts the run once');
+    const p = g.Profile.get();
+    eq(p.runs, 1, 'the profile counts the run once');
+    eq(p.wins, 1, 'and the win once');
+    eq(p.bestHand, 3200000, 'best hand includes endless');
+    eq(p.bestAnte, 12, 'best ante includes endless');
+    eq(p.history[0].best, 3200000, 'the history row is brought up to date');
+  });
+
+  it('an endless run posts after every cleared blind, not only at the end', function () {
+    // Closing the tab mid-endless must not lose the best so far.
+    const g = createGame({ quiet: true });
+    g.Profile.reset();
+    const calls = recordingArcade(g);
+    g.Game.newRun('ENDLESS2', { deckId: 'standard', stake: 1 });
+    g.Game.run.ante = 8;
+    g.Game.saveMetaOnEnd(true);
+    g.Game.goEndless();
+    const before = calls.submits.length;
+    g.Game.run.stats.best = 999999;
+    g.Game.advanceAfterCashout();
+    eq(calls.submits.length, before + 1, 'a cleared blind posts');
+    eq(calls.submits[calls.submits.length - 1].score, 999999);
+  });
+
+  it('an ordinary run still posts exactly once', function () {
+    const g = createGame({ quiet: true });
+    g.Profile.reset();
+    const calls = recordingArcade(g);
+    g.Game.newRun('ONCE');
+    g.Game.saveMetaOnEnd(false);
+    g.Game.saveMetaOnEnd(false);
+    eq(calls.submits.length, 1, 'one post');
+    eq(calls.bests.length, 0, 'no endless bookkeeping');
+    eq(calls.runs.length, 1, 'one run');
+  });
+
   it('survives a corrupted profile blob', function () {
     const g = createGame({ quiet: true });
     g.localStorage.setItem('onemoreroll.profile.v1', 'not json');

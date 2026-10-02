@@ -500,6 +500,10 @@
   }
 
   function advanceAfterCashout() {
+    // Endless: every cleared blind may hold a new best turn, and the run's
+    // win was recorded long ago — post as we go, so closing the tab mid-run
+    // cannot lose it. One write per blind, and only in endless.
+    if (run.endless) extendRun();
     if (run.blindIndex === 2) {
       if (run.ante >= 8 && !run.endless) {
         run.won = true; run.phase = 'won';
@@ -1052,37 +1056,67 @@
 
   /** Fold a finished run into the profile exactly once. Returns new unlocks. */
   function saveMetaOnEnd(won) {
-    if (!run || run.metaSaved) return null;
+    if (!run) return null;
+    if (run.metaSaved) {
+      /* An endless run ending. Its win was folded in when ante 8 fell, and
+         this guard used to stop here — so every turn played in endless, the
+         million-point ones included, never reached the leaderboard, the
+         profile's best hand, or the arcade's best. Post them now; the run
+         itself is still counted only once. */
+      if (run.endless) extendRun();
+      return null;
+    }
     run.metaSaved = true;
 
-    // The arcade ranks One More Roll by best single turn — the number this
-    // game already treats as its headline score. Fire-and-forget.
     if (global.Arcade) {
-      global.Arcade.progress.recordRun('onemoreroll', {
-        score: (run.stats && run.stats.best) || 0,
-        ante: run.ante,
-        won: !!won,
-        // The peril level is this game's difficulty ladder.
-        difficulty: String(run.stake || 1)
-      });
-      global.Arcade.submitScore('onemoreroll', {
-        score: (run.stats && run.stats.best) || 0,
-        metrics: {
-          ante: run.ante,
-          money: (run.stats && run.stats.moneyEarned) || 0
-        },
-        meta: {
-          ante: run.ante,
-          round: run.roundNum,
-          won: !!won,
-          deck: run.deckId,
-          stake: run.stake,
-          seed: run.seed
-        }
-      });
+      global.Arcade.progress.recordRun('onemoreroll', arcadeSummary(won));
+      postScore(won);
     }
 
     return Profile.endRun(run, won);
+  }
+
+  function arcadeSummary(won) {
+    return {
+      score: (run.stats && run.stats.best) || 0,
+      ante: run.ante,
+      won: !!won,
+      // The peril level is this game's difficulty ladder.
+      difficulty: String(run.stake || 1)
+    };
+  }
+
+  /* The arcade ranks One More Roll by best single turn — the number this game
+     already treats as its headline score. Fire-and-forget, and safe to repeat:
+     the server keeps each player's best and a row only ever moves up. */
+  function postScore(won) {
+    global.Arcade.submitScore('onemoreroll', {
+      score: (run.stats && run.stats.best) || 0,
+      metrics: {
+        ante: run.ante,
+        money: (run.stats && run.stats.moneyEarned) || 0
+      },
+      meta: {
+        ante: run.ante,
+        round: run.roundNum,
+        won: !!won,
+        deck: run.deckId,
+        stake: run.stake,
+        seed: run.seed
+      }
+    });
+  }
+
+  /** An endless run carrying on past its win: raise every best, count nothing twice. */
+  function extendRun() {
+    if (global.Arcade) {
+      // An endless run has won, whatever run.won says now (goEndless clears it).
+      if (typeof global.Arcade.progress.recordBest === 'function') {
+        global.Arcade.progress.recordBest('onemoreroll', arcadeSummary(true));
+      }
+      postScore(true);
+    }
+    Profile.extendRun(run);
   }
 
   global.Game = {

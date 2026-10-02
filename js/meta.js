@@ -163,6 +163,30 @@
     };
   }
 
+  /**
+   * The same run, played on past its win (endless mode). Raises the bests and
+   * brings the run's history row up to date — never counts it again: endRun
+   * did that when the run first ended.
+   */
+  function extendRun(run) {
+    const d = get();
+    const best = (run.stats && run.stats.best) || 0;
+    if (run.ante > d.bestAnte) d.bestAnte = run.ante;
+    if (best > d.bestHand) {
+      d.bestHand = best;
+      d.bestHandCat = run.stats.bestCat || '-';
+    }
+    if (run.money > d.maxMoney) d.maxMoney = run.money;
+    const row = d.history.find(function (h) { return h.seed === run.seed && h.won; });
+    if (row) {
+      row.ante = run.ante;
+      row.round = run.roundNum;
+      row.best = Math.max(row.best || 0, best);
+      row.charms = run.charms.map(function (c) { return c.id; });
+    }
+    save();
+  }
+
   function reset() {
     data = blank();
     save();
@@ -171,7 +195,7 @@
   load();
 
   global.Profile = {
-    get: get, save: save, reset: reset, reload: load,
+    get: get, save: save, reset: reset, reload: load, extendRun: extendRun,
     discover: discover, isDiscovered: isDiscovered, discoveredCount: discoveredCount,
     deckUnlocked: deckUnlocked, unlockedStake: unlockedStake,
     startRun: startRun, endRun: endRun
