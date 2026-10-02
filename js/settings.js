@@ -10,19 +10,18 @@
   const KEY = 'onemoreroll.settings.v1';
   const LEGACY_KEY = 'rollatro.settings.v1';   // pre-rename
 
-  function prefersReducedMotion() {
-    try {
-      return !!(global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches);
-    } catch (e) { return false; }
-  }
-
   const DEFAULTS = {
     master: 0.7,
     sfx: 0.8,
     music: 0.4,
     shake: true,
     particles: true,
-    reducedMotion: prefersReducedMotion(),
+    /* Off unless the player turns it on. It used to follow the operating
+       system's reduced-motion setting, which quietly took the dice's motion
+       away from anyone whose Windows had it on — and the game IS its motion.
+       The toggle is still in Settings. */
+    reducedMotion: false,
+    reducedMotionChosen: false,   // true once the player sets it themselves
     speed: 1,          // 1 = normal, 1.75 = fast, 3 = instant-ish
     highContrast: false,
     showPreview: true  // highlight which dice will score
@@ -47,6 +46,10 @@
       const n = Number(state[k]);
       state[k] = isFinite(n) ? Math.min(1, Math.max(0, n)) : DEFAULTS[k];
     });
+    // A save from before the default changed carries whatever the OS said,
+    // stored the first time any setting was touched. Only a choice the
+    // player actually made survives.
+    if (!state.reducedMotionChosen) state.reducedMotion = false;
     const sp = Number(state.speed);
     state.speed = isFinite(sp) && sp > 0 ? Math.min(4, Math.max(0.5, sp)) : 1;
     return state;
@@ -64,6 +67,7 @@
   function set(key, value) {
     if (!state) load();
     state[key] = value;
+    if (key === 'reducedMotion') state.reducedMotionChosen = true;
     persist();
     apply();
     listeners.forEach(function (fn) { try { fn(key, value, state); } catch (e) {} });
