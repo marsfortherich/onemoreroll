@@ -170,8 +170,11 @@
 
   /* ================= run lifecycle ================= */
   function startNew(seed, opts, skipConfirm) {
-    if (!skipConfirm && Game.hasSave() &&
-        !global.confirm('Start a new run? Your saved run will be discarded.')) return;
+    if (!skipConfirm && Game.hasSave()) {
+      UI.askYesNo({ title: 'New run', text: 'Start a new run? Your saved run will be discarded.', ok: 'Start new run', danger: true })
+        .then(function (yes) { if (yes) startNew(seed, opts, true); });
+      return;
+    }
     Game.abandon();
     Game.newRun(seed, opts || {});
     UI.render();

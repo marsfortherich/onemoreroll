@@ -660,6 +660,12 @@
     }
   }
 
+  /** A yes/no in the arcade's own dialog; the browser's only without the arcade layer. */
+  function askYesNo(opts) {
+    return global.Arcade && global.Arcade.ui && global.Arcade.ui.confirm
+      ? global.Arcade.ui.confirm(opts) : Promise.resolve(global.confirm(opts.text));
+  }
+
   /* ================= blind select ================= */
   function showBlindSelect() {
     const run = Game.run;
@@ -905,7 +911,9 @@
       acts.appendChild(btn('Collection', 'alt', function () { Collection.show(function () { showOptions(); }); }));
       acts.appendChild(btn('How to Play', 'alt', showHelp));
       acts.appendChild(btn('Abandon Run', 'danger', function () {
-        if (confirm('Abandon this run? Progress is lost.')) { Game.abandon(); Main.title(); }
+        const asked = Game.run;
+        askYesNo({ title: 'Abandon run', text: 'Abandon this run? Progress is lost.', ok: 'Abandon', danger: true })
+          .then(function (yes) { if (yes && Game.run === asked) { Game.abandon(); Main.title(); } });
       }));
       root.appendChild(acts);
     });
@@ -1119,6 +1127,7 @@
     showGameOver: showGameOver, showVictory: showVictory, arcadeRow: arcadeRow,
     showRunInfo: showRunInfo, showOptions: showOptions, showHelp: showHelp,
     showSettings: showSettings,
+    askYesNo: askYesNo,
     openDicePicker: openDicePicker,
     showShop: function () { Shop.show(); },
     showPack: function (pack, options, pick) { Shop.showPack(pack, options, pick); },
