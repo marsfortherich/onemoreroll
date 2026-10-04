@@ -91,6 +91,10 @@
     let deckId = DK.deckById(p.lastDeck).id;
     if (!Profile.deckUnlocked(DK.deckById(deckId))) deckId = 'standard';
     let stake = Math.min(p.lastStake || 1, Profile.unlockedStake());
+    const demo = Game.isDemo();
+    if (demo) { deckId = 'standard'; stake = 1; }
+    /** A choice the demo holds back: shown, greyed, and labelled. */
+    function heldNote(desc) { return desc + '<br><br><b>' + global.Arcade.demo.note + '</b>'; }
     let seed = '';
 
     function draw() {
@@ -104,16 +108,21 @@
         /* --- decks --- */
         const grid = el('div', 'deck-grid');
         DK.DECKS.forEach(function (d) {
-          const unlocked = Profile.deckUnlocked(d);
-          const box = el('div', 'deck-card' + (d.id === deckId ? ' on' : '') + (unlocked ? '' : ' locked'));
+          // The demo plays the Standard Deck; the rest are named, not hidden.
+          const held = demo && d.id !== 'standard';
+          const unlocked = Profile.deckUnlocked(d) && !held;
+          const named = unlocked || held;
+          const box = el('div', 'deck-card' + (d.id === deckId ? ' on' : '') +
+            (unlocked ? '' : ' locked') + (held ? ' held' : ''));
           const dkIcon = el('div', 'dk-icon');
-          dkIcon.appendChild(Icons.node(unlocked ? Icons.forContent('deck', d.id) : 'lock'));
+          dkIcon.appendChild(Icons.node(named ? Icons.forContent('deck', d.id) : 'lock'));
           box.appendChild(dkIcon);
-          box.appendChild(el('div', 'dk-name', unlocked ? d.name : 'Locked'));
+          box.appendChild(el('div', 'dk-name', named ? d.name : 'Locked'));
+          if (held) box.appendChild(global.Arcade.ui.fullGameBadge());
           UI.attachTip(box, {
-            name: unlocked ? d.name : 'Locked deck',
+            name: named ? d.name : 'Locked deck',
             rar: 'deck',
-            desc: unlocked ? d.desc : '<b>Unlock:</b> ' + DK.unlockText(d)
+            desc: held ? heldNote(d.desc) : unlocked ? d.desc : '<b>Unlock:</b> ' + DK.unlockText(d)
           });
           if (unlocked) {
             box.addEventListener('click', function () { deckId = d.id; Sfx.play('cardFlip'); draw(); });
@@ -131,18 +140,21 @@
         root.appendChild(el('div', 'shelf-label', 'Peril — difficulty. Each one stacks on the last.'));
         const srow = el('div', 'stake-row');
         DK.STAKES.forEach(function (st) {
-          const unlocked = st.level <= Profile.unlockedStake();
+          const held = demo && st.level > 1;      // the demo plays the first Peril
+          const unlocked = st.level <= Profile.unlockedStake() && !held;
           const chip = el('div', 'stake-chip' + (st.level === stake ? ' on' : '') + (unlocked ? '' : ' locked'));
           chip.style.setProperty('--stake-color', st.color);
           chip.appendChild(el('span', 'sk-n', String(st.level)));
           UI.attachTip(chip, {
             name: st.name, rar: 'peril ' + st.level,
-            desc: unlocked ? st.desc : 'Win at ' + DK.stakeByLevel(st.level - 1).name + ' to unlock.',
+            desc: held ? heldNote(st.desc)
+              : unlocked ? st.desc : 'Win at ' + DK.stakeByLevel(st.level - 1).name + ' to unlock.',
             foot: unlocked ? 'All lower stakes also apply' : null
           });
           if (unlocked) chip.addEventListener('click', function () { stake = st.level; Sfx.play('click'); draw(); });
           srow.appendChild(chip);
         });
+        if (demo) srow.appendChild(global.Arcade.ui.fullGameBadge());
         root.appendChild(srow);
 
         const sd = el('div', 'deck-blurb');

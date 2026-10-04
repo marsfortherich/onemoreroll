@@ -794,7 +794,15 @@
       if (global.Arcade && global.Arcade.dealer) {
         global.Arcade.dealer.reactToRun({ ante: run.ante, score: run.stats.best, won: true });
       }
-      acts.appendChild(btn('Keep Going (Endless)', 'gold', function () { Game.goEndless(); }));
+      const endless = btn('Keep Going (Endless)', 'gold', function () { Game.goEndless(); });
+      if (Game.isDemo()) {
+        // Endless is the full game's: shown, so the player knows it is there.
+        endless.disabled = true;
+        endless.classList.add('held');
+        endless.title = global.Arcade.demo.note;
+        endless.appendChild(global.Arcade.ui.fullGameBadge());
+      }
+      acts.appendChild(endless);
       acts.appendChild(btn('New Run', 'alt', function () { Main.chooseStart(); }));
       root.appendChild(acts);
     });
@@ -804,10 +812,12 @@
   function appendUnlocks(root, unlocks) {
     if (!unlocks) return;
     const bits = [];
+    // In a demo they are earned all the same, and waiting in the full game.
+    const later = Game.isDemo() ? ' — yours in the full game' : '';
     (unlocks.decks || []).forEach(function (id) {
-      bits.push(DK.deckById(id).name + ' unlocked');
+      bits.push(DK.deckById(id).name + ' unlocked' + later);
     });
-    if (unlocks.stake) bits.push(DK.stakeByLevel(unlocks.stake).name + ' unlocked');
+    if (unlocks.stake) bits.push(DK.stakeByLevel(unlocks.stake).name + ' unlocked' + later);
     if (!bits.length) return;
     const box = el('div', 'unlock-banner');
     box.appendChild(el('div', 'ub-title', 'New unlocks'));

@@ -909,6 +909,70 @@ describe('profile', function () {
   });
 });
 
+/* ============================================================
+   The demo build.
+
+   A demo page carries <meta name="arcade-demo">, and Arcade.isDemo() says
+   so. The demo plays the base run -- the Standard Deck, the first Peril, to
+   the win at ante 8 -- and holds back the other decks, the Perils and
+   endless. Its run saves under a key of its own, so a full-game run in the
+   same browser is neither resumed into the demo nor thrown away by it.
+   ============================================================ */
+describe('demo build', function () {
+  function demo(on) {
+    const g = createGame({ quiet: true });
+    g.Arcade = { isDemo: function () { return on !== false; } };
+    return g;
+  }
+
+  it('starts the Standard Deck at the first Peril, whatever is asked', function () {
+    const g = demo();
+    g.Game.newRun('DEMO', { deckId: 'glass', stake: 5 });
+    eq(g.Game.run.deckId, 'standard', 'deck');
+    eq(g.Game.run.stake, 1, 'peril');
+    ok(g.Game.isDemo(), 'the game knows');
+  });
+
+  it('holds endless back', function () {
+    const g = demo();
+    g.Game.newRun('DEMOEND');
+    const run = g.Game.run;
+    run.ante = 8;
+    run.won = true;
+    g.Game.goEndless();
+    eq(run.ante, 8, 'no ninth ante');
+    eq(!!run.endless, false, 'not endless');
+  });
+
+  it('saves apart from the full game, and never touches its saves', function () {
+    const g = demo(false);
+    g.Game.newRun('FULLRUN');
+    g.Game.save();
+    g.localStorage.setItem('onemoreroll.save.v2', 'a legacy save');
+
+    g.Arcade.isDemo = function () { return true; };
+    eq(g.Game.hasSave(), false, 'the full run is not offered to the demo');
+    g.Game.newRun('DEMORUN');
+    g.Game.save();
+    ok(g.localStorage.getItem('onemoreroll.save.v3.demo'), 'the demo run is saved');
+    g.Game.abandon();
+    eq(g.localStorage.getItem('onemoreroll.save.v3.demo'), null, 'and cleared');
+    ok(g.localStorage.getItem('onemoreroll.save.v3'), 'the full run survived');
+    eq(g.localStorage.getItem('onemoreroll.save.v2'), 'a legacy save', 'so did the legacy key');
+
+    g.Arcade.isDemo = function () { return false; };
+    ok(g.Game.load(), 'the full game still loads its run');
+    eq(g.Game.run.seed, 'FULLRUN');
+  });
+
+  it('switched off, it is the full game', function () {
+    const g = demo(false);
+    g.Game.newRun('FULL', { deckId: 'glass', stake: 5 });
+    eq(g.Game.run.deckId, 'glass');
+    eq(g.Game.run.stake, 5);
+  });
+});
+
 /* ---------- report ---------- */
 const totalTests = passed + failures.length;
 if (failures.length) {

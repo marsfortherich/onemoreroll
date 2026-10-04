@@ -13,6 +13,16 @@
   ];
   const META_KEY = 'onemoreroll.meta.v1';
 
+  /* A demo build (Arcade.isDemo) plays the base run: the Standard Deck, the
+     first Peril, no endless. Its run lives under a key of its own, and it
+     never reads or clears the full game's keys, so a full-game run already
+     in this browser is neither resumed into the demo nor thrown away by it. */
+  function isDemo() {
+    return !!(global.Arcade && global.Arcade.isDemo && global.Arcade.isDemo());
+  }
+  function saveKey() { return isDemo() ? SAVE_KEY + '.demo' : SAVE_KEY; }
+  function legacyKeys() { return isDemo() ? [] : LEGACY_SAVE_KEYS; }
+
   const BASE_TURNS = 5;
   const BASE_REROLLS = 2;
   const BASE_DICE = 5;
@@ -46,8 +56,8 @@
   function newRun(seedStr, opts) {
     opts = opts || {};
     const seed = (seedStr && String(seedStr).trim()) || U.randomSeedString();
-    const deck = DK.deckById(opts.deckId || 'standard');
-    const stake = Math.max(1, Math.min(opts.stake || 1, DK.STAKES.length));
+    const deck = DK.deckById(isDemo() ? 'standard' : (opts.deckId || 'standard'));
+    const stake = isDemo() ? 1 : Math.max(1, Math.min(opts.stake || 1, DK.STAKES.length));
     run = {
       version: SAVE_VERSION,
       seed: seed.toUpperCase(),
@@ -526,6 +536,7 @@
 
   /** leave the victory screen and roll into endless mode */
   function goEndless() {
+    if (isDemo()) return;          // endless is the full game's
     run.won = false;
     run.endless = true;
     run.metaSaved = true;
@@ -955,17 +966,18 @@
       data.version = SAVE_VERSION;
       data.rngState = run.rng.save();
       data.uidCounter = uidCounter;
-      localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+      localStorage.setItem(saveKey(), JSON.stringify(data));
     } catch (e) { /* storage unavailable or quota exceeded — play on unsaved */ }
   }
 
   /** Read + validate a stored save. Returns the parsed object, or null. */
   function readSave() {
     let raw = null;
-    try { raw = localStorage.getItem(SAVE_KEY); } catch (e) { return null; }
+    try { raw = localStorage.getItem(saveKey()); } catch (e) { return null; }
     if (!raw) {
-      for (let i = 0; i < LEGACY_SAVE_KEYS.length; i++) {
-        try { raw = localStorage.getItem(LEGACY_SAVE_KEYS[i]); } catch (e) { raw = null; }
+      const legacy = legacyKeys();
+      for (let i = 0; i < legacy.length; i++) {
+        try { raw = localStorage.getItem(legacy[i]); } catch (e) { raw = null; }
         if (raw) break;
       }
     }
@@ -1042,8 +1054,8 @@
 
   function clearSaves() {
     try {
-      localStorage.removeItem(SAVE_KEY);
-      LEGACY_SAVE_KEYS.forEach(function (k) { localStorage.removeItem(k); });
+      localStorage.removeItem(saveKey());
+      legacyKeys().forEach(function (k) { localStorage.removeItem(k); });
     } catch (e) {}
   }
 
@@ -1122,6 +1134,7 @@
   global.Game = {
     get run() { return run; },
     newRun: newRun, save: save, load: load, hasSave: hasSave, abandon: abandon,
+    isDemo: isDemo,
     meta: meta, saveMetaOnEnd: saveMetaOnEnd,
     makeDie: makeDie,
     turnsForBlind: turnsForBlind, rerollsPerTurn: rerollsPerTurn,

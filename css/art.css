@@ -625,3 +625,14 @@ html.high-contrast .die{background:#fff}
   outline:2px solid var(--gold);
   outline-offset:2px;
 }
+
+/* ---- Demo builds ------------------------------------------------------
+   A choice the demo holds back (a deck, a Peril, endless) is shown, not
+   hidden: dimmed like a locked one, with the arcade's "Full game" pill at
+   full strength on top. */
+.deck-card.held{opacity:1}
+.deck-card.held>:not(.ac-fullgame){opacity:.42}
+.deck-card.held .ac-fullgame{margin-top:6px}
+.stake-row .ac-fullgame{align-self:center;margin-left:6px}
+.ov-btn.held{opacity:.6;cursor:not-allowed}
+.ov-btn.held .ac-fullgame{margin-left:8px}
