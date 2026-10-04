@@ -920,7 +920,22 @@
   }
 
   /* ================= settings ================= */
-  function showSettings(fromTitle) {
+  /* Settings from the arcade bar, over whatever is on screen — the blind
+     select, the shop, a cash-out, or the table itself. The overlay's own nodes
+     are set aside, listeners and all, and put back on Back. */
+  function settingsFromBar() {
+    const showing = !dom.overlay.classList.contains('hidden');
+    if (showing && dom.overlayInner.querySelector('.set-grid')) return;   // already open
+    const kept = Array.prototype.slice.call(dom.overlayInner.childNodes);
+    const wasHidden = !showing;
+    showSettings(false, function () {
+      clear(dom.overlayInner);
+      kept.forEach(function (n) { dom.overlayInner.appendChild(n); });
+      dom.overlay.classList.toggle('hidden', wasHidden);
+    });
+  }
+
+  function showSettings(fromTitle, back) {
     openOverlay(function (root) {
       root.appendChild(el('div', 'ov-title', 'Settings'));
       root.appendChild(el('div', 'ov-sub', 'Saved automatically. Audio starts on your first click.'));
@@ -974,7 +989,7 @@
         b.addEventListener('click', function () {
           Settings.set('speed', pair[1]);
           Sfx.play('click');
-          showSettings(fromTitle);
+          showSettings(fromTitle, back);
         });
         seg.appendChild(b);
       });
@@ -991,10 +1006,11 @@
 
       const acts = el('div', 'ov-actions');
       acts.appendChild(btn('Back', 'alt', function () {
-        if (fromTitle) Main.title(); else showOptions();
+        if (back) back();
+        else if (fromTitle) Main.title(); else showOptions();
       }));
       acts.appendChild(btn('Reset to defaults', 'alt small', function () {
-        Settings.reset(); Sfx.setVolumes(); showSettings(fromTitle);
+        Settings.reset(); Sfx.setVolumes(); showSettings(fromTitle, back);
       }));
       root.appendChild(acts);
     });
@@ -1127,6 +1143,7 @@
     showGameOver: showGameOver, showVictory: showVictory, arcadeRow: arcadeRow,
     showRunInfo: showRunInfo, showOptions: showOptions, showHelp: showHelp,
     showSettings: showSettings,
+    settingsFromBar: settingsFromBar,
     askYesNo: askYesNo,
     openDicePicker: openDicePicker,
     showShop: function () { Shop.show(); },

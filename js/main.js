@@ -216,6 +216,8 @@
     // the title screen draws, so the arcade bar is never wrong on first paint.
     if (global.Arcade) {
       global.Arcade.init({ gameId: 'onemoreroll' });
+      // the bar's Settings opens this game's own, over whatever is on screen
+      if (global.Arcade.ui.setSettings) global.Arcade.ui.setSettings(UI.settingsFromBar);
       global.Arcade.ui.setSound({
         ui: function () { Sfx.play('click'); },
         success: function () { Sfx.play('coin'); },
