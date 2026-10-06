@@ -195,6 +195,7 @@
   load();
 
   global.Profile = {
+    KEY: KEY,
     get: get, save: save, reset: reset, reload: load, extendRun: extendRun,
     discover: discover, isDiscovered: isDiscovered, discoveredCount: discoveredCount,
     deckUnlocked: deckUnlocked, unlockedStake: unlockedStake,

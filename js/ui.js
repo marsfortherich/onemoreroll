@@ -1124,9 +1124,15 @@
     dom.btnOptions.addEventListener('click', showOptions);
 
     document.addEventListener('keydown', function (e) {
+      // Keys typed into the arcade's forms, or pressed over its dialogs, are
+      // not the table's: typing a name with an "r" in it used to reroll.
+      if (global.Arcade && global.Arcade.ui && global.Arcade.ui.claimsKeys &&
+          global.Arcade.ui.claimsKeys(e)) return;
       const run = Game.run;
       if (e.key === 'Escape') { if (run && run.phase === 'playing') closeOverlay(); return; }
       if (!run || run.phase !== 'playing' || busy) return;
+      // nor over this game's own menus (Settings, run info) drawn above the dice
+      if (!dom.overlay.classList.contains('hidden')) return;
       if (e.key >= '1' && e.key <= '9') {
         const i = parseInt(e.key, 10) - 1;
         if (run.dice[i]) Game.toggleHold(i);

@@ -224,6 +224,11 @@
   }
 
   function boot() {
+    // Another tab saved the profile: take it, or this tab's next save would
+    // write back the copy it loaded and erase what that tab earned.
+    global.addEventListener('storage', function (e) {
+      if (e.key === Profile.KEY) Profile.reload();
+    });
     // Shared account + leaderboard layer. Resolves the signed-in player before
     // the title screen draws, so the arcade bar is never wrong on first paint.
     if (global.Arcade) {
