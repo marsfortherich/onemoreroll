@@ -636,3 +636,19 @@ html.high-contrast .die{background:#fff}
 .stake-row .ac-fullgame{align-self:center;margin-left:6px}
 .ov-btn.held{opacity:.6;cursor:not-allowed}
 .ov-btn.held .ac-fullgame{margin-left:8px}
+
+/* ---- Phones ---------------------------------------------------------------
+   style.css already folds the table into one column below 660px. On a phone
+   the five dice did not fit one row (they wrapped four and one), the
+   scorecard's two columns could not shrink below their longest name and ran
+   off the screen, and the arcade bar sat on the blind. None of this reaches
+   the desktop or Steam windows. */
+@media (max-width:640px){
+  #app{padding-top:calc(var(--ac-bar-h) + 10px)}
+  #diceRow{gap:8px;min-height:0}
+  .die{width:54px;height:54px;padding:7px;border-radius:10px}
+  .pip{width:8px;height:8px}
+  #scorecard .sc-list{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .sc-row{min-width:0}
+  .sc-row .pv{min-width:32px;font-size:12px}
+}

@@ -5,6 +5,8 @@
   'use strict';
 
   const el = U.el;
+  // a phone has no right-click: arcade-ui.js turns a long press into one
+  const touch = () => !!(global.Arcade && global.Arcade.ui && global.Arcade.ui.isTouch && global.Arcade.ui.isTouch());
 
   function priceTag(item) {
     const free = Game.run.freeItems > 0;
@@ -37,8 +39,8 @@
     const run = Game.run;
     const box = el('div', 'shop-shelf');
     box.appendChild(el('div', 'shelf-label',
-      'Your Charms (' + run.charms.length + '/' + run.charmSlots + ') — right-click to sell   ·   ' +
-      'Consumables (' + run.consumables.length + '/' + run.consumableSlots + ') — click to use'));
+      'Your Charms (' + run.charms.length + '/' + run.charmSlots + ') — ' + (touch() ? 'long-press' : 'right-click') + ' to sell   ·   ' +
+      'Consumables (' + run.consumables.length + '/' + run.consumableSlots + ') — ' + (touch() ? 'tap' : 'click') + ' to use'));
     const row = el('div', 'ov-row');
     run.charms.forEach(function (inst) {
       row.appendChild(UI.charmCard(inst, {

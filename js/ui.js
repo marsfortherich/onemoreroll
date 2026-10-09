@@ -5,6 +5,8 @@
   'use strict';
 
   const $ = U.$, el = U.el, clear = U.clear;
+  // a phone has no right-click: arcade-ui.js turns a long press into one
+  const touch = () => !!(global.Arcade && global.Arcade.ui && global.Arcade.ui.isTouch && global.Arcade.ui.isTouch());
 
   let selectedCat = null;
   let busy = false;
@@ -183,7 +185,7 @@
     attachTip(node, {
       name: def.name, rar: def.rarity,
       desc: def.desc(inst, Game.run),
-      foot: opts.tipFoot || (inst.sell ? 'Right-click to sell for $' + inst.sell : null)
+      foot: opts.tipFoot || (inst.sell ? (touch() ? 'Long-press' : 'Right-click') + ' to sell for $' + inst.sell : null)
     });
     if (opts.onClick) node.addEventListener('click', opts.onClick);
     if (opts.onRight) node.addEventListener('contextmenu', function (e) { e.preventDefault(); opts.onRight(e); });
@@ -1038,7 +1040,8 @@
         '<li>Each category can only be used <b>once per blind</b>. Scoring one your dice do not satisfy scratches it for <b>0</b>.</li>' +
         '<li>Score = <span class="c">Pips</span> <b>×</b> <span class="m">Fortune</span>. The category supplies the base; every scoring die adds its pips; Charms and die upgrades do the rest.</li>' +
         '<li><b>Runes</b> permanently level up a category. <b>Omens</b> upgrade individual dice. <b>Charms</b> are your build.</li>' +
-        '<li>Right-click a Charm to sell it. Click a Rune/Omen to use it.</li>' +
+        (touch() ? '<li>Long-press a Charm to sell it. Tap a Rune/Omen to use it.</li>'
+                 : '<li>Right-click a Charm to sell it. Click a Rune/Omen to use it.</li>') +
         '<li><b>Charms fire left to right, and order matters</b> — drag them to rearrange. ' +
         'Put <span class="m">+Fortune</span> before <span class="m">XMult</span> to get the most out of both.</li>' +
         '<li><b>Decks</b> change how a run opens; <b>Perils</b> pile on difficulty. Win to unlock more of both.</li>' +
